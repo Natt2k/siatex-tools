@@ -139,7 +139,7 @@ function main() {
         let data_form = [];
 
         try {
-            const response = await fetch('https://raw.githubusercontent.com/ItzCandra23/siatex-tools/main/2025.json');
+            const response = await fetch('https://raw.githubusercontent.com/Natt2k/siatex-tools/main/2025.json');
 
             const json_data = await response.json();
             data_form = Object.entries(json_data);
@@ -170,7 +170,7 @@ function main() {
         let data_form = {};
 
         try {
-            const response = await fetch('https://raw.githubusercontent.com/ItzCandra23/siatex-tools/main/options_2025.json');
+            const response = await fetch('https://raw.githubusercontent.com/Natt2k/siatex-tools/main/options_2025.json');
 
             const json_data = await response.json();
             data_form = json_data;
