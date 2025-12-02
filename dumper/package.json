@@ -1,0 +1,22 @@
+{
+  "name": "sql-inject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/axios": "^0.9.36",
+    "axios": "^1.10.0",
+    "xlsx": "^0.18.5"
+  },
+  "dependencies": {
+    "axios-retry": "^4.5.0",
+    "dotenv": "^17.0.1",
+    "exceljs": "^4.4.0"
+  }
+}
