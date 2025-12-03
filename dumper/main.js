@@ -29,8 +29,10 @@ const cookie = 'ci_session=k8itih4f8jv1rhbcmbghvev72k';
 const target_database = env?.DATABASE ? env.DATABASE?.trim() || 'siatex_masterdb' : argv[2];
 const target_table = env?.TABLE?.trim() || '';
 const target_columns = env?.COLUMNS?.trim() || '';
-const target_condition = env?.CONDITION?.trim().replace(" is ", " = ") || ``;
+let target_condition = env?.CONDITION?.trim().replace(" is ", " = ") || ``;
+const target_search = argv[3] || undefined;
 
+if (target_search) target_condition = `CONCAT(${target_columns}) LIKE '%${target_search}%'`;
 
 // const target_database = 'siatex_masterdb';
 // const target_table = 'ms_siswa';
@@ -192,7 +194,7 @@ async function get(payload, { log = true } = { log: true }) {
             }
         });
 
-        if (env?.ACTION.trim() === "tabledata") {
+        if (env?.ACTION.trim() === "tabledata" && !target_search) {
             try {
                 const header = `| ${temp_columns.replaceAll(",", " | ")} |\n|${temp_columns.split(",").map(() => '----').join("|")}|\n`;
                 save(header + Object.values(data).join(""), filename, "\n");
@@ -370,6 +372,13 @@ async function saveTableData(columns = target_columns, table = target_table, dat
     if (!columns.trim()) columns = (await getColumns()).replaceAll(";", ",");
     temp_columns = columns;
     const data = await getTableData(database, table, columns);
+
+    if (target_search) {
+        console.log(columns);
+        console.log(data);
+        return;
+    }
+    
     const header = `| ${columns.replaceAll(",", " | ")} |\n|${columns.split(",").map(() => '----').join("|")}|\n`;
     save(header + data, file, "\n")
 }
