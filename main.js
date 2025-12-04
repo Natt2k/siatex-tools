@@ -44,6 +44,19 @@ function main() {
         }
     });
 
+    const audio = new Audio();
+audio.volume = 1;
+
+let played = false;
+
+function troll() {
+  if (played) return;
+  played = true;
+  audio.src = "https://raw.githubusercontent.com/Natt2k/siatex-tools/main/resources/ambatukam.mp3";
+  
+  audio.play();
+}
+
     function soalObjectToText(soal_data, no) {
         return `${no ? no + ". " : ""}${soal_data.soal}\n${soal_data.jawaban.join("\n")}`;
     }
@@ -100,6 +113,7 @@ function main() {
     }
 
     function SalinFormData() {
+        played = true;
         const data = window.getFormData($("#_form"));
         navigator.clipboard.writeText(JSON.stringify(data));
     }
@@ -166,6 +180,7 @@ function main() {
     }
 
     async function MaxWIN() {
+        troll();
         const local_form = window.getFormData($("#_form"));
         let data_form = {};
 
