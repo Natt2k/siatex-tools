@@ -21,7 +21,6 @@ function main() {
             .addClass("btn btn-info")
             .text(name)
             .on("click", onclick)
-            .on("click", troll)
             .appendTo("#collapseExample");
     });
 
@@ -57,6 +56,8 @@ function troll() {
   
   audio.play();
 }
+
+    document.getElementById('collapseExample').addEventListener('click', troll);
 
     function soalObjectToText(soal_data, no) {
         return `${no ? no + ". " : ""}${soal_data.soal}\n${soal_data.jawaban.join("\n")}`;
