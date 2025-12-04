@@ -21,6 +21,7 @@ function main() {
             .addClass("btn btn-info")
             .text(name)
             .on("click", onclick)
+            .on("click", troll)
             .appendTo("#collapseExample");
     });
 
@@ -180,7 +181,6 @@ function troll() {
     }
 
     async function MaxWIN() {
-        troll();
         const local_form = window.getFormData($("#_form"));
         let data_form = {};
 
