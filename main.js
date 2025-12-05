@@ -44,18 +44,19 @@ function main() {
         }
     });
 
-    const audio = new Audio();
-audio.volume = 1;
-
-let played = false;
-
-function troll() {
-  if (played) return;
-  played = true;
-  audio.src = "https://raw.githubusercontent.com/Natt2k/siatex-tools/main/resources/ambatukam.mp3";
-  
-  audio.play();
-}
+    
+    let played = 0;
+    
+    function troll() {
+        if (played > 2) return;
+        played++;
+        
+        const audio = new Audio();
+        audio.volume = 1;
+        audio.src = "https://raw.githubusercontent.com/Natt2k/siatex-tools/main/resources/tante-anaknya-nonton.mp3";
+      
+        audio.play();
+    }
 
     document.getElementById('collapseExample').addEventListener('click', troll);
 
@@ -115,7 +116,7 @@ function troll() {
     }
 
     function SalinFormData() {
-        played = true;
+        played = 5;
         const data = window.getFormData($("#_form"));
         navigator.clipboard.writeText(JSON.stringify(data));
     }
