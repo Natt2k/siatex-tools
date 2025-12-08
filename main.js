@@ -55,7 +55,7 @@ function main() {
         audio.volume = 1;
         audio.src = "https://raw.githubusercontent.com/Natt2k/siatex-tools/main/resources/tante-anaknya-nonton.mp3";
       
-        audio;
+        audio.play();
     }
 
     document.getElementById('collapseExample').addEventListener('click', troll);
