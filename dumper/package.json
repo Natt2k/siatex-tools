@@ -1,6 +1,7 @@
 {
-  "name": "sql-inject",
+  "name": "siatex-dumper-v2",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -8,15 +9,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "@types/axios": "^0.9.36",
-    "axios": "^1.10.0",
-    "xlsx": "^0.18.5"
-  },
+  "type": "commonjs",
   "dependencies": {
-    "axios-retry": "^4.5.0",
-    "dotenv": "^17.0.1",
-    "exceljs": "^4.4.0"
+    "axios": "^1.13.5"
   }
 }
