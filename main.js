@@ -15,7 +15,7 @@ function main() {
         { name: "Terapkan[AI]", onclick: TerapkanAI },
         { name: "TerapkanMulti[AI]", onclick: TerapkanMultiAI },
         // { name: "[NEW] Auto WIN", onclick: AutoWIN },
-        { name: "[NEW] Max WIN", onclick: MaxWIN },
+        { name: "Max WIN", onclick: MaxWIN },
     ].forEach(({ name, onclick }) => {
         $("<div>")
             .addClass("btn btn-info")
@@ -183,6 +183,11 @@ function main() {
     }
 
     async function MaxWIN() {
+        if (!isVerified()) {
+            alert("Anda belum terverifikasi!");
+            return;
+        }
+        
         const local_form = window.getFormData($("#_form"));
         let data_form = {};
 
@@ -296,15 +301,15 @@ function main() {
     }
 
     function isJawabanSamaUntukNoSoal(data, noSoal) {
-  const jawaban = data
-    .flat()
-    .filter(item => item.no_soal === noSoal)
-    .map(item => item.jawab);
+        const jawaban = data
+            .flat()
+            .filter(item => item.no_soal === noSoal)
+            .map(item => item.jawab);
 
-  if (jawaban.length === 0) return false;
+        if (jawaban.length === 0) return false;
 
-  const pertama = jawaban[0];
-  return jawaban.every(j => j === pertama);
+        const pertama = jawaban[0];
+        return jawaban.every(j => j === pertama);
     }
 
     function extractTextAndImages(el) {
@@ -324,6 +329,25 @@ function main() {
 
         return result.trim();
     }
+
+    function isVerified() {
+        return (localStorage.getItem("isVerified") === "true");
+    }
+}
+
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    
+    return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+async function verifyPassword(inputPassword, storedHash) {
+    const inputHash = await hashPassword(inputPassword);
+    return inputHash === storedHash;
 }
 
 main();
