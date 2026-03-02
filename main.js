@@ -6,13 +6,10 @@
     if (typeof window.ExamData === 'undefined' || !window.ExamData.soal) return;
     const examData = window.ExamData;
     const soalList = examData.soal;
-    const orderedIds = examData.ordered_soal_ids || soalList.map(s => s.id);
+    const orderedIds = soalList.map(s => s.id);
     const csrf = examData.csrf;
     const saveUrl = examData.save_url;
-    const soalIds = orderedIds.map(id => {
-        const soal = soalList.find(s => s.id == id);
-        return soal ? soal.id : null;
-    }).filter(id => id !== null);
+    const soalIds = orderedIds.filter(id => id !== null);
     async function sendJawaban(idSoal, jawabanHuruf) {
         const formData = new FormData();
         formData.append('_token', csrf);
