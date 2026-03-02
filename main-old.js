@@ -183,10 +183,7 @@ function main() {
     }
 
     async function MaxWIN() {
-        if (!isVerified()) {
-            alert("Anda belum terverifikasi!");
-            return;
-        }
+       
         
         const local_form = window.getFormData($("#_form"));
         let data_form = {};
