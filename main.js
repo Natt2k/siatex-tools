@@ -53,7 +53,7 @@ function main() {
         
         const audio = new Audio();
         audio.volume = 1;
-        audio.src = "https://raw.githubusercontent.com/Natt2k/siatex-tools/main/resources/tante-anaknya-nonton.mp3";
+        audio.src = "https://raw.githubusercontent.com/Natt2k/siatex-tools/main/resources/hidup-jokowi.mp3";
       
         audio.play();
     }
